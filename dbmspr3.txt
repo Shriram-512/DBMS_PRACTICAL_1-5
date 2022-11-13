@@ -1,0 +1,97 @@
+3. The following tables form part of a database held in a relational DBMS:
+Hotel (HotelNo, Name, City) HotelNo is the primary key
+Room (RoomNo, HotelNo, Type, Price)
+Booking (HotelNo, GuestNo, DateFrom, DateTo, RoomNo)
+Guest (GuestNo, GuestName, GuestAddress) GuestNo is primary key
+Room contains room details for each hotel and (HotelNo, RoomNo) forms the
+primary key.Booking contains details of the bookings and the primary key comprises
+(HotelNo, GuestNo and DateFrom)
+
+SQL queries:
+
+CREATE DATABASE HotelBooking;
+
+USE HotelBooking;.
+
+CREATE TABLE Hotel( hotel_no INT, hotel_name VARCHAR(20), city VARCHAR(20), PRIMARY KEY (hotel_no));
+
+CREATE TABLE Room(room_no INT, hotel_no INT, type VARCHAR(20), price DECIMAL, PRIMARY KEY(room_no), FOREIGN KEY(hotel_no) REFERENCES Hotel(hotel_no));
+
+CREATE TABLE Guest(guest_no INT, guest_name VARCHAR(20), g_address VARCHAR(20), PRIMARY KEY(guest_no));
+
+CREATE TABLE Booking(hotel_no INT, guest_no INT, dateFrom DATE, dateTo DATE, room_no INT, FOREIGN KEY(guest_no) REFERENCES Guest(guest_no), FOREIGN KEY(room_no) REFERENCES Room(room_no));
+
+INSERT INTO Hotel( hotel_no, hotel_name, city) VALUES( 1, 'Grosvenor', 'London'),(2, 'RajPlaza', 'Pune'), (3, 'Alpine', 'Mumbai')( 4, 'Athens', 'London');
+
+INSERT INTO Room( room_no, hotel_no, type, price) VALUES
+(101, 1, 'single', 30),
+(102, 1, 'double', 40),
+(103, 1, 'family', 50),
+(201, 2, 'single', 35),
+(301, 3, 'double', 45),
+(401, 4, 'double', 55),
+(402, 4, 'family', 50);
+
+INSERT INTO Guest( guest_no, guest_name, g_address) VALUES
+(11, 'Shriam', 'Kakslauttanen'),
+(12, 'Druva', 'Jaipur'),
+(13, 'Pravin', 'Latur'),
+(14, 'Mahesh', 'Pune'),
+(15, 'Atharva', 'Mumbai'),
+(16, 'Krishna', 'London'),
+(17, 'Sanket', 'Kolhapur'),
+(18, 'Dhaval', 'Surat');
+
+INSERT INTO Booking(hotel_no, guest_no, dateFrom, dateTo, room_no) VALUES
+(1, 11, '2022-08-25', '2022-11-25', 102),
+(1, 12, '2022-04-24', '2022-12-02', 103),
+(2, 16, '2022-05-23', '2022-08-13', 201),
+(4, 17, '2022-09-22', '2022-10-11', 401),
+(4, 13, '2022-09-21', '2022-12-18', 402);
+
+Solve following queries by SQL
+
+1. List full details of all hotels.
+
+SELECT * FROM Hotel;
+
+2. How many hotels are there?
+
+SELECT COUNT(*) FROM Hotel;
+
+3. List the price and type of all rooms at the Grosvenor Hotel
+
+SELECT type, price FROM Room WHERE hotel_no = (SELECT hotel_no FROM Hotel WHERE hotel_name = 'Grosvenor');
+
+4. List the number of rooms in each hotel.
+
+SELECT hotel_no, count(room_no) AS count FROM Room GROUP BY (hotel_no);
+
+5. Update the price of all rooms by 5%.
+
+UPDATE Room SET price = price + price*.05;
+
+6. List full details of all hotels in London.
+
+SELECT * FROM Hotel WHERE city = 'London';
+
+
+7. What is the average price of a room?
+
+SELECT avg(price) AS AvgPrice FROM Room;
+
+8. List all guests currently staying at the Grosvenor Hotel
+
+SELECT * FROM Guest WHERE guest_no IN (SELECT guest_no FROM Booking WHERE dateFrom<=CURRENT_DATE AND dateTo>=CURRENT_DATE AND hotel_no IN (SELECT hotel_no FROM Hotel WHERE hotel_name = 'Grosvenor'));
+
+9. List the number of rooms in each hotel in London.
+
+SELECT r.hotel_no, count(room_no) AS count FROM Room r, Hotel h WHERE r.hotel_no = h.hotel_no AND city = 'London' GROUP BY (r.hotel_no);
+
+10.Create one view on above database and query it.
+
+CREATE VIEW room_view AS
+SELECT room_no, type, price
+FROM Room;
+
+SELECT * FROM room_view;
