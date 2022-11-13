@@ -1,0 +1,76 @@
+Practical No. 1:  
+
+Create a db called company consist of the following tables. 
+1.Emp (eno,ename, job,hiredate,salary,commission,deptno,) 
+2.dept(deptno,deptname,location) 
+eno is primary key in emp 
+deptno is primary key in dept
+
+SQL Queries: 
+
+CREATE DATABASE company;
+
+USE company;
+
+CREATE TABLE Emp(eno INT AUTO_INCREMENT, ename VARCHAR(30), job VARCHAR(20), hiredate DATE, salary INT, commission INT, deptno INT, PRIMARY KEY (eno));
+
+CREATE TABLE dept(deptno INT, deptname VARCHAR(30), location VARCHAR(20), PRIMARY KEY (deptno));
+
+INSERT INTO Emp(eno, ename, job, hiredate, salary, commission, deptno)
+VALUES(1, 'Shriram', 'Manager', '1969-02-25', 80000, 7, 10),
+(2, 'Krishna', 'Manager', '1999-05-27', 110000, 5, 20),
+(3, 'Sanket', 'Clerk', '1979-06-14', 55000, 8, 30 ),
+(4, 'Aniket', 'Salesman', '2001-08-07', 69000, 9, 20), 
+(5, 'Kisna', 'Analyst', '2000-06-12', 120000, 6, 10);
+       
+INSERT INTO dept (deptno, deptname, location)
+VALUES(10, 'Dev', 'Tokyo'),
+(20, 'Marketing', 'Nairobi'),
+(30, 'Sales', 'Helsinki'),
+(40, 'Hr', 'Denver');
+
+Solve Queries by SQL :
+
+1. List the maximum salary paid to salesman
+
+SELECT MAX(salary)  FROM Emp WHERE job = 'Salesman';
+
+2. List name of emp whose name start with ‘I’
+
+SELECT ename FROM Emp  WHERE ename LIKE 'I%' ;
+
+3. List details of emp who have joined before ’30-sept-81’
+
+SELECT * FROM Emp WHERE hiredate<('1991-09-30');
+
+4. List the emp details in the descending order of their basic salary
+
+SELECT * FROM Emp ORDER BY salary DESC;
+
+
+5. List of no. of emp & avg salary for emp in the dept no ‘20’
+
+SELECT count(*), avg(salary) From Emp Where deptno = 20;
+
+6. List the avg salary, minimum salary of the emp hiredatewise for dept no ‘10’.
+
+//Doubt : SELECT AVG(salary),Min(salary) FROM Emp WHERE deptno = 10;
+
+7. List emp name and its department
+
+SELECT e.ename,d.deptname FROM Emp e, dept d WHERE e.deptno = d.deptno;
+
+8. List total salary paid to each department
+
+SELECT e.salary, d.deptname FROM Emp e, dept d WHERE e.deptno = d.deptno;
+
+9. List details of employee working in ‘Dev’ department
+
+SELECT * FROM Emp WHERE deptno IN 
+(SELECT deptno FROM dept WHERE deptname = 'Dev') ;
+
+10. Update salary of all employees in deptno 10 by 5 %.
+
+UPDATE Emp SET salary  = (select salary+(select salary*.5))
+WHERE deptno = 10;
+
